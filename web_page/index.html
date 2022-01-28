@@ -1,0 +1,110 @@
+<html lang="en">
+    <head>
+        <style>
+            .container{
+                width: 500px;
+                height: 300px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 10px;
+                border: 1px solid black;
+            }
+            #display_image{
+                width:250px;
+                height: 200px;
+                border: 1px solid black;
+                background-position: center;
+                background-size: cover;
+            }
+#content {
+    width:100%;
+    margin: auto;
+}
+.container {
+    position: relative;
+    width: 50%;
+    margin: auto;
+}
+#btn{
+    width: 200px;
+    height: 50px;
+    margin-top: 15px;
+    color:white;
+    background-color: #88B04B;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    padding:0px;
+  
+}
+#xyy {
+    height:300px;
+}
+        </style>
+    </head>
+    <body style="background-color:#94afda;">
+        <div id="content">
+            <h1><center>Interface de prédiction du tumeur avec le modéle IA CNN</center></h1><br>
+        <div class="container" id="xyy">
+           <div id="btn">
+                <label style="height:100%;width:100%;" for="image_input"><center>choisir image</center></label>
+           </div>
+            <input style="visibility:hidden;" type="file" id="image_input" class="form-control" accept="image/png, image/png">
+            <div id="display_image">
+                <p style="visibility: hidden;">ijzdks</p>
+            </div>
+            <br>
+         </div><br><br>
+        <div class="container">
+            <h2><center>Affichage du résultat de prédiction</center></h2>
+            <label for="fname">Classe prédite:</label>
+            <input type="text" id="classificationResult" class="form-control" name="classificationResult"><br><br>
+        </div>
+        <script>
+                const image_input = document.querySelector("#image_input");
+                image_input.addEventListener("change", async function() {
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => {
+                    const uploaded_image = reader.result;
+                    document.querySelector("#display_image").style.backgroundImage = `url(${uploaded_image})`;
+                    });
+                    reader.readAsDataURL(this.files[0]);
+                    
+                    //returning prediction
+                    const payload = {
+                    imageName : this.files[0].name
+                };
+                const response = await fetch('http://127.0.0.1:8000/predict', {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type':'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const jsonResponse = await response.json();
+
+                document.getElementById('classificationResult').value= jsonResponse.classificaton_result;
+                });
+                /*async function sendImageName() {
+                    const payload = {
+                        imageName : this.files[0].name
+                    };
+                    const response = await fetch('https://42e6-35-238-238-160.ngrok.io/predict', {
+                        method: "POST",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type':'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    const jsonResponse = await response.json();
+
+                    document.getElementById('classificationResult').value= jsonResponse.classificaton_result;
+
+                }*/
+        </script>
+        </div>
+    </body>
+</html>
